@@ -1,4 +1,4 @@
-name: 'Default'
+name: Default
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: Terraform
     runs-on: ubuntu-latest
     environment: default
 
@@ -19,17 +19,20 @@ jobs:
       run:
         shell: bash
 
+    env:
+        TF_VAR_azurerm_subscription_id: ${{ vars.AZ_SUBSCRIPTION_ID }}
+        TF_VAR_azurerm_tenant_id: ${{ vars.AZ_TENANT_ID }}
+        TF_VAR_azurerm_client_id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
+        TF_VAR_azurerm_client_secret: ${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}
+        TF_VAR_resource_group_name: ${{ vars.AZ_RESOURCE_GROUP_NAME }}
+        TF_VAR_resource_group_location: ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
+        TF_VAR_storage_account_name: ${{ vars.AZ_STORAGE_ACCOUNT_NAME }}
+
     steps:
 
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-
-    # Log in to azure
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZ_CREDENTIALS }}
 
     # Install the latest compatible version of Terraform CLI
     - name: Setup Terraform
@@ -42,6 +45,10 @@ jobs:
       working-directory: ./terraform
       run: >- 
         terraform init 
-        -backend-config="resource_group_name=${{ vars.AZ_RESOURCE_GROUP_NAME }}" 
+        -backend-config="subscription_id=${{ vars.AZ_SUBSCRIPTION_ID }}"
+        -backend-config="tenant_id=${{ vars.AZ_TENANT_ID }}"
+        -backend-config="client_id=${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}"
+        -backend-config="client_secret=${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}"
+        -backend-config="resource_group_name=${{ vars.AZ_RESOURCE_GROUP_NAME }}"
         -backend-config="storage_account_name=${{ vars.AZ_STORAGE_ACCOUNT_NAME }}"
 
