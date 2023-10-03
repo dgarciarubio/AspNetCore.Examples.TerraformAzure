@@ -52,3 +52,17 @@ jobs:
         -backend-config="resource_group_name=${{ vars.AZ_RESOURCE_GROUP_NAME }}"
         -backend-config="storage_account_name=${{ vars.AZ_STORAGE_ACCOUNT_NAME }}"
 
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      working-directory: ./terraform
+      run: terraform fmt -check
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      working-directory: ./terraform
+      run: terraform plan -input=false
+
+    # On push to "main", build or change infrastructure according to Terraform configuration files
+    - name: Terraform Apply
+      working-directory: ./terraform
+      run: terraform apply -auto-approve -input=false
