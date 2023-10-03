@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">=0.12"
+  required_version = "~>1.5"
 
   required_providers {
     azurerm = {
@@ -7,7 +7,10 @@ terraform {
       version = "~>3.0"
     }
   }
-  backend "azurerm" {}
+  backend "azurerm" {
+    container_name = "tfstate"
+    key            = "terraform.tfstate"
+  }
 }
 
 provider "azurerm" {
