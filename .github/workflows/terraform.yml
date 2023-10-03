@@ -20,7 +20,22 @@ jobs:
         shell: bash
 
     steps:
+
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Log in to azure
     - name: Azure Login
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZ_CREDENTIALS }}
+
+    # Install the latest version of Terraform CLI
+    - name: Setup Terraform
+      # You may pin to the exact commit or the version.
+      # uses: hashicorp/setup-terraform@633666f66e0061ca3b725c73b2ec20cd13a8fdd1
+      uses: hashicorp/setup-terraform@v2.0.3
+      with:
+        terraform_version: ~>3.0
+
