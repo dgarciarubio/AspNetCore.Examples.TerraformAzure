@@ -18,11 +18,17 @@ jobs:
     - name: Azure Login
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: >-
+            {
+                "subscriptionId": "${{ vars.AZ_SUBSCRIPTION_ID }}",
+                "tenantId": "${{ vars.AZ_TENANT_ID }}",
+                "clientId": "${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}",
+                "clientSecret": "${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}"
+            }
 
   terraform:
     name: Deploy Infrastructure with Terraform
-    
+    needs: [create_basic_infrastructure]
     runs-on: ubuntu-latest
     environment: default
 
