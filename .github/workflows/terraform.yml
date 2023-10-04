@@ -35,7 +35,10 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
             if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) = false ]; then
+                echo 'Resource group with name ${{ vars.AZ_RESOURCE_GROUP_NAME }} was not found, procceeding with creation...'
                 az group create --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
+            else
+                echo 'Resource group with name ${{ vars.AZ_RESOURCE_GROUP_NAME }} already exists, skipping creation...'
             fi
 
   terraform:
