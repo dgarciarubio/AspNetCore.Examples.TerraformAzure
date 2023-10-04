@@ -10,6 +10,6 @@ permissions:
 
 jobs:
   deploy_default:
-    uses: ./.github/workflows/deploy_terraform.yml@main
+    uses: ./.github/workflows/deploy_terraform.yml
     with:
       environment: default
