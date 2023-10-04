@@ -9,15 +9,27 @@ permissions:
   contents: read
 
 jobs:
-  terraform:
-    name: Terraform
+  create_basic_infrastructure:
+    name: Create Basic Infrastructure
     runs-on: ubuntu-latest
     environment: default
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
+    steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: >- 
+            {
+                "subscriptionId": "${{ vars.AZ_SUBSCRIPTION_ID }}",
+                "tenantId": "${{ vars.AZ_TENANT_ID }}"
+                "clientId": "${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}",
+                "clientSecret": "${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}"
+            }
+
+  terraform:
+    name: Deploy Infrastructure with Terraform
+    runs-on: ubuntu-latest
+    environment: default
 
     env:
         TF_VAR_azurerm_subscription_id: ${{ vars.AZ_SUBSCRIPTION_ID }}
