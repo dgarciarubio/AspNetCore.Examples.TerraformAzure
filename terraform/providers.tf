@@ -8,8 +8,8 @@ terraform {
     }
   }
   backend "azurerm" {
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
+    container_name = "tfstate"
+    key            = "terraform.tfstate"
   }
 }
 
@@ -22,15 +22,15 @@ provider "azurerm" {
   client_secret   = var.azurerm_client_secret
 }
 variable "azurerm_subscription_id" {
-  type    = string
+  type = string
 }
 variable "azurerm_tenant_id" {
-  type    = string
+  type = string
 }
 variable "azurerm_client_id" {
-  type    = string
+  type = string
 }
 variable "azurerm_client_secret" {
-  type    = string
+  type      = string
   sensitive = true
 }
