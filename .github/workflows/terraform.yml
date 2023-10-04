@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: default
     outputs:
-        resource_group_created: ${{ steps.create_resources.outputs.resource_group_created }}
-        storage_account_created: ${{ steps.create_resources.outputs.storage_account_created }}
-        storage_container_created: ${{ steps.create_resources.outputs.storage_container_created }}
+        resource_group_created: ${{ steps.create_resource_group.outputs.created }}
+        storage_account_created: ${{ steps.create_storage_account.outputs.created }}
+        storage_container_created: ${{ steps.create_storage_container.outputs.created }}
 
     steps:
 
@@ -33,25 +33,39 @@ jobs:
             }
 
     # Creates resource group if not exists
-    - name: Create Resources
-      id: create_resources
+    - name: Create Resource Group
+      id: create_resource_group
       uses: azure/CLI@v1
       with:
         azcliversion: 2.30.0
         inlineScript: |
             if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) = false ]; then
                 az group create --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
-                echo "resource_group_created=true" >> "$GITHUB_OUTPUT"
+                echo "created=true" >> "$GITHUB_OUTPUT"
             fi
 
+    # Creates storage account if not exists
+    - name: Create Storage Account
+      id: create_storage_account
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
             if [ $(az storage account list --query "[?name == '${{ vars.AZ_STORAGE_ACCOUNT_NAME }}'] | length(@)") = 0 ]; then
                 az storage account create --name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --resource-group ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
-                echo "storage_account_created=true" >> "$GITHUB_OUTPUT"
+                echo "created=true" >> "$GITHUB_OUTPUT"
             fi
 
+    # Creates storage container if not exists
+    - name: Create Storage Container
+      id: create_storage_container
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
             if [ $(az storage container exists --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors --query "exists") = false ]; then
                 az storage container create --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate
-                echo "storage_container_created=true" >> "$GITHUB_OUTPUT"
+                echo "created=true" >> "$GITHUB_OUTPUT"
             fi
 
   deploy_terraform:
