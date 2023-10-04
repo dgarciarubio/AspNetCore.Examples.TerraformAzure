@@ -87,7 +87,7 @@ jobs:
     name: Deploy infrastructure with Terraform
     needs: [deploy_prerrequisites]
     runs-on: ubuntu-latest
-    environment: default
+    environment: ${{ inputs.environment }}
 
     env:
         TF_VAR_azurerm_subscription_id: ${{ vars.AZ_SUBSCRIPTION_ID }}
