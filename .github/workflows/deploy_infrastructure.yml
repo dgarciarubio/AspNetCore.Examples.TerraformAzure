@@ -12,10 +12,6 @@ on:
 permissions:
   contents: read
 
-# Avoid concurrent runs in the same environment
-concurrency:
-  group: ${{ inputs.environment }}
-
 jobs:
   deploy_prerrequisites:
     name: Deploy prerrequisites for Terraform

@@ -15,10 +15,6 @@ on:
 permissions:
   contents: read
 
-# Avoid concurrent runs in the same environment
-concurrency:
-  group: ${{ inputs.environment }}
-
 jobs:
   deploy:
     name: Deploy Web App
