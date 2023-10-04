@@ -1,19 +1,26 @@
 name: Deploy Terraform
 
 on:
+    # Call from other workflows
     workflow_call:
       inputs:
         environment:
           required: true
           type: string
+    # Run manually
     workflow_dispatch:
       inputs:
           environment:
             required: true
             type: string
 
+# Only allow to read repo content
 permissions:
   contents: read
+
+# Avoid concurrent runs in the same environment
+concurrency:
+  group: ${{ inputs.environment }}
 
 jobs:
   deploy_prerrequisites:
@@ -21,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     outputs:
+        # New resources were created
         resource_group_created: ${{ steps.create_resource_group.outputs.created }}
         storage_account_created: ${{ steps.create_storage_account.outputs.created }}
         storage_container_created: ${{ steps.create_storage_container.outputs.created }}
@@ -118,7 +126,7 @@ jobs:
       working-directory: ./terraform
       run: terraform fmt -check
 
-    # Import prerrequisites
+    # Import newly created prerrequisite resources
     - name: Terraform Import Resource Group
       if: ${{needs.deploy_prerrequisites.outputs.resource_group_created}}
       working-directory: ./terraform
