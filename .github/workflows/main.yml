@@ -12,6 +12,10 @@ permissions:
     contents: read
 
 jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yml
+
   deploy_default:
     name: Deploy on Default Environment
     uses: ./.github/workflows/deploy_infrastructure.yml
