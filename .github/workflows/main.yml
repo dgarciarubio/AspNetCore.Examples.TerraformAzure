@@ -15,11 +15,15 @@ jobs:
   build:
     name: Build
     uses: ./.github/workflows/build.yml
+    with:
+      project_path: './src/AspNetCore.Examples.TerraformAzure.Api'
+      artifact_name: 'web-app'
 
   deploy_default:
     name: Deploy on Default Environment
     needs: [build]
-    uses: ./.github/workflows/deploy_infrastructure.yml
+    uses: ./.github/workflows/deploy.yml
     with:
       environment: default
+      artifact_name: 'web-app'
     secrets: inherit

@@ -1,0 +1,36 @@
+name: Deploy Web App
+
+on:
+  # Call from other workflows
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      artifact_name:
+        required: true
+        type: string
+
+# Only allow to read repo content
+permissions:
+  contents: read
+
+# Avoid concurrent runs in the same environment
+concurrency:
+  group: ${{ inputs.environment }}
+
+jobs:
+  deploy_infrastructure:
+    name: Deploy Infrastructure
+    uses: ./.github/workflows/deploy_infrastructure.yml
+    with:
+      environment: ${{ inputs.environment }}
+    secrets: inherit
+  deploy_web_app:
+    name: Deploy Web App
+    needs: [deploy_infrastructure]
+    uses: ./.github/workflows/deploy_webapp.yml
+    with:
+      environment: ${{ inputs.environment }}
+      artifact_name: ${{ inputs.artifact_name }}
+    secrets: inherit

@@ -3,6 +3,13 @@ name: Build
 on:
   # Call from other workflows
   workflow_call:
+    inputs:
+      project_path:
+        required: true
+        type: string
+      artifact_name:
+        required: true
+        type: string
 
 # Only allow to read repo content
 permissions:
@@ -31,13 +38,13 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Build with dotnet
-        run: dotnet build ./src/AspNetCore.Examples.TerraformAzure.Api --configuration Release
+        run: dotnet build ${{ inputs.project_path }} --configuration Release
 
       - name: Publish with dotnet
-        run: dotnet publish ./src/AspNetCore.Examples.TerraformAzure.Api --configuration Release --output ./publish/app
+        run: dotnet publish ${{ inputs.project_path }} --configuration Release --output ./publish/app
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-            name: web-app
+            name: ${{ inputs.artifact_name }}
             path: ./publish/app

@@ -1,0 +1,45 @@
+name: Deploy Web App
+
+on:
+  # Call from other workflows
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      artifact_name:
+        required: true
+        type: string
+
+# Only allow to read repo content
+permissions:
+  contents: read
+
+# Avoid concurrent runs in the same environment
+concurrency:
+  group: ${{ inputs.environment }}
+
+jobs:
+  deploy:
+    name: Deploy Web App
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+   
+    steps:
+
+    - uses: actions/download-artifact@v1
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ./${{ inputs.artifact_name }}
+
+    # Azure Login using service principal
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: >-
+            {
+                "subscriptionId": "${{ vars.AZ_SUBSCRIPTION_ID }}",
+                "tenantId": "${{ vars.AZ_TENANT_ID }}",
+                "clientId": "${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}",
+                "clientSecret": "${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}"
+            }
