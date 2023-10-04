@@ -18,6 +18,7 @@ jobs:
 
   deploy_default:
     name: Deploy on Default Environment
+    needs: [build]
     uses: ./.github/workflows/deploy_infrastructure.yml
     with:
       environment: default
