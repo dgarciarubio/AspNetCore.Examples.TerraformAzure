@@ -21,7 +21,7 @@ resource "azurerm_storage_account" "st" {
   cross_tenant_replication_enabled = false
 }
 variable "storage_account_name" {
-  type    = string
+  type = string
 }
 
 resource "azurerm_storage_container" "tfstate" {
