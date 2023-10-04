@@ -1,9 +1,16 @@
-name: Terraform
+name: Deploy Terraform
 
 on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
+    workflow_call:
+      inputs:
+        environment:
+          required: true
+          type: string
+    workflow_dispatch:
+      inputs:
+          environment:
+            required: true
+            type: string
 
 permissions:
   contents: read
@@ -12,7 +19,7 @@ jobs:
   deploy_prerrequisites:
     name: Deploy prerrequisites for Terraform
     runs-on: ubuntu-latest
-    environment: default
+    environment: ${{ inputs.environment }}
     outputs:
         resource_group_created: ${{ steps.create_resource_group.outputs.created }}
         storage_account_created: ${{ steps.create_storage_account.outputs.created }}
