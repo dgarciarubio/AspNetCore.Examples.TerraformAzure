@@ -1,4 +1,4 @@
-name: Default
+name: Terraform
 
 on:
   push:
@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  create_basic_infrastructure:
-    name: Create Basic Infrastructure
+  deploy_prerrequisites:
+    name: Deploy prerrequisites for Terraform
     runs-on: ubuntu-latest
     environment: default
     outputs:
@@ -40,32 +40,23 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
             if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) = false ]; then
-                echo 'Resource group with name ${{ vars.AZ_RESOURCE_GROUP_NAME }} was not found, procceeding with creation...'
                 az group create --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
                 echo "resource_group_created=true" >> "$GITHUB_OUTPUT"
-            else
-                echo 'Resource group with name ${{ vars.AZ_RESOURCE_GROUP_NAME }} already exists, skipping creation.'
             fi
 
             if [ $(az storage account list --query "[?name == '${{ vars.AZ_STORAGE_ACCOUNT_NAME }}'] | length(@)") = 0 ]; then
-                echo 'Storage account with name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} was not found, procceeding with creation...'
                 az storage account create --name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --resource-group ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
                 echo "storage_account_created=true" >> "$GITHUB_OUTPUT"
-            else
-                echo 'Storage account with name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} already exists, skipping creation.'
             fi
 
             if [ $(az storage container exists --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors --query "exists") = false ]; then
-                echo 'Storage container with name tfstate was not found, procceeding with creation...'
                 az storage container create --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate
                 echo "storage_container_created=true" >> "$GITHUB_OUTPUT"
-            else
-                echo 'Storage container with name tfstate already exists, skipping creation.'
             fi
 
-  terraform:
-    name: Deploy Infrastructure with Terraform
-    needs: [create_basic_infrastructure]
+  deploy_terraform:
+    name: Deploy infrastructure with Terraform
+    needs: [deploy_prerrequisites]
     runs-on: ubuntu-latest
     environment: default
 
@@ -109,19 +100,19 @@ jobs:
 
     # Imports resource group
     - name: Terraform Import Resource Group
-      if: ${{needs.create_basic_infrastructure.outputs.resource_group_created}}
+      if: ${{needs.deploy_prerrequisites.outputs.resource_group_created}}
       working-directory: ./terraform
       run: terraform import azurerm_resource_group.rg /subscriptions/${{ vars.AZ_SUBSCRIPTION_ID }}/resourceGroups/${{ vars.AZ_RESOURCE_GROUP_NAME }}
 
     # Imports storage account
     - name: Terraform Import Storage Account
-      if: ${{needs.create_basic_infrastructure.outputs.storage_account_created}}
+      if: ${{needs.deploy_prerrequisites.outputs.storage_account_created}}
       working-directory: ./terraform
       run: terraform import azurerm_storage_account.st /subscriptions/${{ vars.AZ_SUBSCRIPTION_ID }}/resourceGroups/${{ vars.AZ_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ vars.AZ_STORAGE_ACCOUNT_NAME }}
 
     # Imports storage account
     - name: Terraform Import Storage Account
-      if: ${{needs.create_basic_infrastructure.outputs.storage_container_created}}
+      if: ${{needs.deploy_prerrequisites.outputs.storage_container_created}}
       working-directory: ./terraform
       run: terraform import azurerm_storage_container.tfstate https://${{ vars.AZ_STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/tfstate
 
