@@ -15,6 +15,8 @@ jobs:
     environment: default
 
     steps:
+
+    # Azure Login using service principal
     - name: Azure Login
       uses: azure/login@v1
       with:
@@ -25,6 +27,16 @@ jobs:
                 "clientId": "${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}",
                 "clientSecret": "${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}"
             }
+
+    # Creates resource group if not exists
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+            if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) = false ]; then
+                az group create --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
+            fi
 
   terraform:
     name: Deploy Infrastructure with Terraform
