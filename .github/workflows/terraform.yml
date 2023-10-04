@@ -38,7 +38,21 @@ jobs:
                 echo 'Resource group with name ${{ vars.AZ_RESOURCE_GROUP_NAME }} was not found, procceeding with creation...'
                 az group create --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
             else
-                echo 'Resource group with name ${{ vars.AZ_RESOURCE_GROUP_NAME }} already exists, skipping creation...'
+                echo 'Resource group with name ${{ vars.AZ_RESOURCE_GROUP_NAME }} already exists, skipping creation.'
+            fi
+
+            if [ $(az storage account list --query "[?name == '${{ vars.AZ_STORAGE_ACCOUNT_NAME }}'] | length(@)") = 0 ]; then
+                echo 'Storage account with name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} was not found, procceeding with creation...'
+                az storage account create --name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --resource-group ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
+            else
+                echo 'Storage account with name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} already exists, skipping creation.'
+            fi
+
+            if [ $(az storage container exists --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors --query "exists") = false ]; then
+                echo 'Storage container with name tfstate was not found, procceeding with creation...'
+                az storage container create --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate
+            else
+                echo 'Resource group with name tfstate already exists, skipping creation.'
             fi
 
   terraform:
