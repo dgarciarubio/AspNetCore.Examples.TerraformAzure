@@ -14,7 +14,7 @@ permissions:
 jobs:
   deploy_default:
     name: Deploy on Default Environment
-    uses: ./.github/workflows/deploy_terraform.yml
+    uses: ./.github/workflows/deploy_infrastructure.yml
     with:
       environment: default
     secrets: inherit

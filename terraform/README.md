@@ -7,6 +7,8 @@ azurerm_client_id       = "<GUID>"
 azurerm_client_secret   = "<String>"
 ```
 
+Any other variables can also be set or overriden in this file.
+
 Also create a `providers.local_override.tf` in this directory with the following contents, to be able to use an [Azure Storage Account as backend](https://developer.hashicorp.com/terraform/language/settings/backends/azurerm):
 
 ```tf
