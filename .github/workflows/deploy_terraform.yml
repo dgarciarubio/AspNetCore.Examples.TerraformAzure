@@ -73,7 +73,7 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
             if [ $(az storage container exists --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors --query "exists") = false ]; then
-                az storage container create --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate
+                az storage container create --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors
                 echo "created=true" >> "$GITHUB_OUTPUT"
             fi
 
@@ -129,7 +129,7 @@ jobs:
       if: ${{needs.deploy_prerrequisites.outputs.storage_account_created}}
       working-directory: ./terraform
       run: terraform import azurerm_storage_account.st /subscriptions/${{ vars.AZ_SUBSCRIPTION_ID }}/resourceGroups/${{ vars.AZ_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ vars.AZ_STORAGE_ACCOUNT_NAME }}
-    - name: Terraform Import Storage Account
+    - name: Terraform Import Storage Container
       if: ${{needs.deploy_prerrequisites.outputs.storage_container_created}}
       working-directory: ./terraform
       run: terraform import azurerm_storage_container.tfstate https://${{ vars.AZ_STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/tfstate
