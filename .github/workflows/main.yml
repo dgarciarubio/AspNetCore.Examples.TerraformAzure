@@ -14,9 +14,11 @@ jobs:
     uses: ./.github/workflows/deploy_terraform.yml
     with:
       environment: default
+    secrets: inherit
 
   deploy_alternate:
     name: Deploy on Alternate Environment
     uses: ./.github/workflows/deploy_terraform.yml
     with:
-        environment: alternate
+      environment: alternate
+    secrets: inherit
