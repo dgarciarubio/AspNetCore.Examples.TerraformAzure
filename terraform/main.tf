@@ -22,7 +22,6 @@ resource "azurerm_storage_account" "st" {
 }
 variable "storage_account_name" {
   type    = string
-  default = ""
 }
 
 resource "azurerm_storage_container" "tfstate" {
