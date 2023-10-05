@@ -46,5 +46,7 @@ jobs:
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ vars.AZ_LINUX_WEB_APP_NAME }}
+        slot-name: 'Production'
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_705228C8491240C69762F7C78D522144 }}
         package: ./${{ inputs.artifact_name }}
    
