@@ -23,6 +23,7 @@ jobs:
    
     steps:
 
+    # Download the build artifact
     - uses: actions/download-artifact@v1
       with:
         name: ${{ inputs.artifact_name }}
@@ -39,3 +40,11 @@ jobs:
                 "clientId": "${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}",
                 "clientSecret": "${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}"
             }
+    
+    # Deploy to Azure Web App
+    - name: 'Run Azure webapp deploy action using Azure Credentials'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ vars.AZ_LINUX_WEB_APP_NAME }}
+        package: ./${{ inputs.artifact_name }}
+   
