@@ -46,6 +46,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ vars.AZ_LINUX_WEB_APP_NAME }}
-        slot-name: 'Production'
         package: ./${{ inputs.artifact_name }}
    
