@@ -24,7 +24,8 @@ jobs:
     steps:
 
     # Download the build artifact
-    - uses: actions/download-artifact@v1
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v1
       with:
         name: ${{ inputs.artifact_name }}
         path: ./${{ inputs.artifact_name }}
@@ -42,7 +43,7 @@ jobs:
             }
     
     # Deploy to Azure Web App
-    - name: 'Run Azure webapp deploy action using Azure Credentials'
+    - name: 'Deploy to Azure'
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ vars.AZ_LINUX_WEB_APP_NAME }}
