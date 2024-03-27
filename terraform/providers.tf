@@ -23,7 +23,7 @@ provider "azurerm" {
   client_secret   = var.azurerm_client_secret
 }
 variable "azurerm_use_oidc" {
-  type = bool
+  type    = bool
   default = false
 }
 variable "azurerm_subscription_id" {
