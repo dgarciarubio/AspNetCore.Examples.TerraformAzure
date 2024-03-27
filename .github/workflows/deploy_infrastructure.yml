@@ -8,9 +8,11 @@ on:
         required: true
         type: string
 
-# Only allow to read repo content
 permissions:
+  # Only allow to read repo content
   contents: read
+  # Allow to write tokens for Azure Login OIDC
+  id-token: write
 
 jobs:
   deploy_prerrequisites:
@@ -26,16 +28,12 @@ jobs:
     steps:
 
     # Azure Login using service principal
-    - name: Azure Login
-      uses: azure/login@v1
+    - name: Azure login
+      uses: azure/login@v2
       with:
-        creds: >-
-            {
-                "subscriptionId": "${{ vars.AZ_SUBSCRIPTION_ID }}",
-                "tenantId": "${{ vars.AZ_TENANT_ID }}",
-                "clientId": "${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}",
-                "clientSecret": "${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}"
-            }
+        subscription-id: ${{ vars.AZ_SUBSCRIPTION_ID }}
+        tenant-id: ${{ vars.AZ_TENANT_ID }}
+        client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
 
     # Creates resource group if not exists
     - name: Create Resource Group
