@@ -7,9 +7,11 @@ on:
   # Run manually
   workflow_dispatch:
 
-# Only allow to read repo content
 permissions:
-    contents: read
+  # Only allow to read repo content
+  contents: read
+  # Allow to write tokens for Azure Login OIDC
+  id-token: write
 
 jobs:
   build:

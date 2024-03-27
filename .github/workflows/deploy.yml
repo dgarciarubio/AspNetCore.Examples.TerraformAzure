@@ -11,9 +11,11 @@ on:
         required: true
         type: string
 
-# Only allow to read repo content
 permissions:
+  # Only allow to read repo content
   contents: read
+  # Allow to write tokens for Azure Login OIDC
+  id-token: write
 
 # Avoid concurrent runs in the same environment
 concurrency:
