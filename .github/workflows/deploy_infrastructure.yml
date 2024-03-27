@@ -78,7 +78,6 @@ jobs:
     environment: ${{ inputs.environment }}
 
     env:
-        TF_VAR_azurerm_use_oidc: true
         TF_VAR_azurerm_subscription_id: ${{ vars.AZ_SUBSCRIPTION_ID }}
         TF_VAR_azurerm_tenant_id: ${{ vars.AZ_TENANT_ID }}
         TF_VAR_azurerm_client_id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
@@ -111,8 +110,7 @@ jobs:
     - name: Terraform Init
       working-directory: ./terraform
       run: >- 
-        terraform init 
-        -backend-config="use_oidc=true"      
+        terraform init      
         -backend-config="subscription_id=${{ vars.AZ_SUBSCRIPTION_ID }}"
         -backend-config="tenant_id=${{ vars.AZ_TENANT_ID }}"
         -backend-config="client_id=${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}"

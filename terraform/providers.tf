@@ -10,21 +10,17 @@ terraform {
   backend "azurerm" {
     container_name = "tfstate"
     key            = "terraform.tfstate"
+    use_oidc       = true
   }
 }
 
 provider "azurerm" {
   features {}
 
-  use_oidc        = var.azurerm_use_oidc
+  use_oidc        = true
   subscription_id = var.azurerm_subscription_id
   tenant_id       = var.azurerm_tenant_id
   client_id       = var.azurerm_client_id
-  client_secret   = var.azurerm_client_secret
-}
-variable "azurerm_use_oidc" {
-  type    = bool
-  default = false
 }
 variable "azurerm_subscription_id" {
   type = string
@@ -34,8 +30,4 @@ variable "azurerm_tenant_id" {
 }
 variable "azurerm_client_id" {
   type = string
-}
-variable "azurerm_client_secret" {
-  type      = string
-  sensitive = true
 }
