@@ -16,10 +16,15 @@ terraform {
 provider "azurerm" {
   features {}
 
+  use_oidc        = var.azurerm_use_oidc
   subscription_id = var.azurerm_subscription_id
   tenant_id       = var.azurerm_tenant_id
   client_id       = var.azurerm_client_id
   client_secret   = var.azurerm_client_secret
+}
+variable "azurerm_use_oidc" {
+  type = bool
+  default = false
 }
 variable "azurerm_subscription_id" {
   type = string
