@@ -13,10 +13,6 @@ permissions:
   # Allow to write tokens for Azure Login OIDC
   id-token: write
 
-# Avoid concurrent runs in the same environment
-concurrency:
-  group: ${{ inputs.environment }}
-
 jobs:
   delete_infrastructure_default:
     name: Delete infrastructure on Default Environment
