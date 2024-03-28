@@ -41,5 +41,5 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
             if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) ]; then
-                az group delete --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}
+                az group delete --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --yes
             fi
