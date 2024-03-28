@@ -4,7 +4,7 @@ For local testing create a `local.auto.tfvars` in this directory with the follow
 azurerm_subscription_id = "<GUID>"
 azurerm_tenant_id       = "<GUID>"
 azurerm_client_id       = "<GUID>"
-azurerm_client_secret   = "<String>"
+storage_account_name    = "<String>"
 ```
 
 Any other variables can also be set or overriden in this file.
@@ -17,7 +17,6 @@ terraform {
     subscription_id      = "<GUID>"
     tenant_id            = "<GUID>"
     client_id            = "<GUID>"
-    client_secret        = "<String>"
     resource_group_name  = "<String>"
     storage_account_name = "<String>"
     container_name       = "tfstate"
@@ -25,5 +24,6 @@ terraform {
   }
 }
 ```
+
 
 In both files replace the `<HIGHLIGTED_VALUES>` with the corresponding configuration of the environment.
