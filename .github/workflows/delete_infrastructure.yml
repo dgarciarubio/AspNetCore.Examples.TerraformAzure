@@ -1,0 +1,41 @@
+name: Delete Infrastructure
+
+on:
+  # Call from other workflows
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+permissions:
+  # Only allow to read repo content
+  contents: read
+  # Allow to write tokens for Azure Login OIDC
+  id-token: write
+
+jobs:
+  delete_infrastructure:
+    name: Delete infrastructure
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+
+    # Azure Login using service principal
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        subscription-id: ${{ vars.AZ_SUBSCRIPTION_ID }}
+        tenant-id: ${{ vars.AZ_TENANT_ID }}
+        client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
+
+    # Delete resource group if exists
+    - name: Delete Resource Group
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+            if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) ]; then
+                az group delete --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}
+            fi

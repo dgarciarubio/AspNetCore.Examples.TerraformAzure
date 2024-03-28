@@ -1,0 +1,22 @@
+name: Destroy
+
+on:
+  # Runs every sunday at 00:00 to save costs
+  schedule:
+    - cron: '0 0 * * 0'
+  # Run manually
+  workflow_dispatch:
+
+permissions:
+  # Only allow to read repo content
+  contents: read
+  # Allow to write tokens for Azure Login OIDC
+  id-token: write
+
+jobs:
+  delete_infrastructure_default:
+    name: Delete infrastructure on Default Environment
+    uses: ./.github/workflows/delete_infrastructure.yml
+    with:
+      environment: default
+    secrets: inherit
