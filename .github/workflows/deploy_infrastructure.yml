@@ -84,8 +84,10 @@ jobs:
         TF_VAR_resource_group_name: ${{ vars.AZ_RESOURCE_GROUP_NAME }}
         TF_VAR_resource_group_location: ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
         TF_VAR_storage_account_name: ${{ vars.AZ_STORAGE_ACCOUNT_NAME }}
+        TF_VAR_container_registry_name: ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}
         TF_VAR_service_plan_name: ${{ vars.AZ_SERVICE_PLAN_NAME }}
         TF_VAR_linux_web_app_name: ${{ vars.AZ_LINUX_WEB_APP_NAME }}
+        TF_VAR_docker_web_app_name: ${{ vars.AZ_DOCKER_WEB_APP_NAME }}
 
     steps:
 
