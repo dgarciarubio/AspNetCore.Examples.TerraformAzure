@@ -24,8 +24,8 @@ resource "azurerm_storage_account" "st" {
     prevent_destroy = true
   }
 }
-variable "storage_account_name" { 
-  type = string 
+variable "storage_account_name" {
+  type = string
 }
 variable "storage_account_tier" {
   type    = string
@@ -50,13 +50,13 @@ resource "azurerm_storage_container" "tfstate" {
 }
 
 resource "azurerm_container_registry" "acr" {
-  name                             = var.container_registry_name
-  resource_group_name              = azurerm_resource_group.rg.name
-  location                         = azurerm_resource_group.rg.location
-  sku                              = var.container_registry_sku
+  name                = var.container_registry_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  sku                 = var.container_registry_sku
 }
-variable "container_registry_name" { 
-  type = string 
+variable "container_registry_name" {
+  type = string
 }
 variable "container_registry_sku" {
   type    = string
@@ -113,7 +113,7 @@ resource "azurerm_linux_web_app" "docker_app" {
   }
 
   site_config {
-    always_on = false
+    always_on  = false
     ftps_state = "FtpsOnly"
   }
 }
