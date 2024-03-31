@@ -51,3 +51,12 @@ jobs:
       project_path: ${{ inputs.project_path }}
       image_name: ${{ inputs.artifact_name }}
     secrets: inherit
+
+  deploy_docker_web_app:
+    name: Deploy Docker Web App
+    needs: [deploy_docker_image]
+    uses: ./.github/workflows/deploy_docker_webapp.yml
+    with:
+      environment: ${{ inputs.environment }}
+      image_name: ${{ inputs.artifact_name }}
+    secrets: inherit

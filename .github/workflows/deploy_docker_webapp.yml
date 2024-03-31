@@ -1,0 +1,41 @@
+name: Deploy Web App
+
+on:
+  # Call from other workflows
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+
+permissions:
+  # Only allow to read repo content
+  contents: read
+  # Allow to write tokens for Azure Login OIDC
+  id-token: write
+
+jobs:
+  deploy:
+    name: Deploy Docker Web App
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+   
+    steps:
+
+    # Azure Login using service principal
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        subscription-id: ${{ vars.AZ_SUBSCRIPTION_ID }}
+        tenant-id: ${{ vars.AZ_TENANT_ID }}
+        client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
+    
+    # Deploy to Azure Web App
+    - name: 'Deploy to Azure'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ vars.AZ_DOCKER_WEB_APP_NAME }}
+        images: '${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} '
