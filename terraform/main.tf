@@ -110,6 +110,9 @@ resource "azurerm_linux_web_app" "docker_app" {
   ftp_publish_basic_authentication_enabled       = false
 
   app_settings = {
+    DOCKER_REGISTRY_SERVER_URL          = "https://${azurerm_container_registry.acr.login_server}"
+    DOCKER_REGISTRY_SERVER_USERNAME     = azurerm_container_registry.acr.admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD     = azurerm_container_registry.acr.admin_password
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
   }
 

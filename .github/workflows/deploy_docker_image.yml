@@ -44,6 +44,7 @@ jobs:
       run: az acr login --name ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}
     
     # Build and push docker image to ACR
-    - run: |
+    - name: Push image to ACR
+      run: |
         docker build -f ${{ inputs.project_path }}/Dockerfile -t  ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} .
         docker push ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} 
