@@ -1,0 +1,50 @@
+name: Deploy Web App
+
+on:
+  # Call from other workflows
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      container_registry_admin_username:
+        required: true
+        type: string
+      container_registry_admin_password:
+        required: true
+        type: string
+      project_path:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+      
+permissions:
+  # Only allow to read repo content
+  contents: read
+  # Allow to write tokens for Azure Login OIDC
+  id-token: write
+
+jobs:
+  deploy:
+    name: Deploy Docker Image
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+   
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Docker ACR Login using admin user
+    - uses: azure/docker-login@v1
+      with:
+        login-server: ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io
+        username: ${{ inputs.container_registry_admin_username }}
+        password: ${{ inputs.container_registry_admin_password }}
+    
+    # Build and push docker image to ACR
+    - run: |
+        docker build -f ${{ inputs.project_path }}/Dockerfile -t  ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} .
+        docker push ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} 

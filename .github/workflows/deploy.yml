@@ -7,6 +7,9 @@ on:
       environment:
         required: true
         type: string
+      project_path:
+        required: true
+        type: string
       artifact_name:
         required: true
         type: string
@@ -22,12 +25,14 @@ concurrency:
   group: ${{ inputs.environment }}
 
 jobs:
+
   deploy_infrastructure:
     name: Deploy Infrastructure
     uses: ./.github/workflows/deploy_infrastructure.yml
     with:
       environment: ${{ inputs.environment }}
     secrets: inherit
+
   deploy_web_app:
     name: Deploy Web App
     needs: [deploy_infrastructure]
@@ -35,4 +40,16 @@ jobs:
     with:
       environment: ${{ inputs.environment }}
       artifact_name: ${{ inputs.artifact_name }}
+    secrets: inherit
+
+  deploy_docker_image:
+    name: Deploy Docker Image
+    needs: [deploy_infrastructure]
+    uses: ./.github/workflows/deploy_docker_image.yml
+    with:
+      environment: ${{ inputs.environment }}
+      container_registry_admin_username:  ${{ needs.deploy_infrastructure.outputs.container_registry_admin_username }}
+      container_registry_admin_password:  ${{ needs.deploy_infrastructure.outputs.container_registry_admin_password }}
+      project_path: ${{ inputs.project_path }}
+      image_name: ${{ inputs.artifact_name }}
     secrets: inherit
