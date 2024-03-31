@@ -106,9 +106,6 @@ resource "azurerm_linux_web_app" "docker_app" {
   service_plan_id     = azurerm_service_plan.sp.id
   https_only          = true
 
-  webdeploy_publish_basic_authentication_enabled = false
-  ftp_publish_basic_authentication_enabled       = false
-
   app_settings = {
     DOCKER_REGISTRY_SERVER_URL          = "https://${azurerm_container_registry.acr.login_server}"
     DOCKER_REGISTRY_SERVER_USERNAME     = azurerm_container_registry.acr.admin_username
@@ -118,10 +115,9 @@ resource "azurerm_linux_web_app" "docker_app" {
 
   site_config {
     always_on  = false
-    ftps_state = "FtpsOnly"
   }
 }
 variable "docker_web_app_name" {
   type    = string
-  default = "aspnetcore-examples-terraformazure-containerwebapp"
+  default = "aspnetcore-examples-terraformazure-dockerwebapp"
 }
