@@ -114,7 +114,7 @@ resource "azurerm_linux_web_app" "docker_app" {
   }
 
   site_config {
-    always_on  = false
+    always_on = false
   }
 }
 variable "docker_web_app_name" {
