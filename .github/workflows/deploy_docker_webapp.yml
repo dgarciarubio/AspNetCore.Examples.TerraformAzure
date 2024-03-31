@@ -1,4 +1,4 @@
-name: Deploy Web App
+name: Deploy Docker Web App
 
 on:
   # Call from other workflows

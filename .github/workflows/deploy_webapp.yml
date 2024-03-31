@@ -1,4 +1,4 @@
-name: Deploy Web App
+name: Deploy Linux Web App
 
 on:
   # Call from other workflows
