@@ -48,8 +48,6 @@ jobs:
     uses: ./.github/workflows/deploy_docker_image.yml
     with:
       environment: ${{ inputs.environment }}
-      container_registry_admin_username:  ${{ needs.deploy_infrastructure.outputs.container_registry_admin_username }}
-      container_registry_admin_password:  ${{ needs.deploy_infrastructure.outputs.container_registry_admin_password }}
       project_path: ${{ inputs.project_path }}
       image_name: ${{ inputs.artifact_name }}
     secrets: inherit

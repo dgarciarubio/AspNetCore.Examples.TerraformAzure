@@ -54,7 +54,6 @@ resource "azurerm_container_registry" "acr" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = var.container_registry_sku
-  admin_enabled       = true
 }
 variable "container_registry_name" {
   type = string
@@ -62,13 +61,6 @@ variable "container_registry_name" {
 variable "container_registry_sku" {
   type    = string
   default = "Basic"
-}
-output "container_registry_admin_username" {
-  value = azurerm_container_registry.acr.admin_username
-}
-output "container_registry_admin_password" {
-  value     = azurerm_container_registry.acr.admin_password
-  sensitive = true
 }
 
 resource "azurerm_service_plan" "sp" {

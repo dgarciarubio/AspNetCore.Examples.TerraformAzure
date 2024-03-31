@@ -7,11 +7,6 @@ on:
       environment:
         required: true
         type: string
-    outputs:
-      container_registry_admin_username:
-        value: ${{ jobs.deploy_terraform.outputs.container_registry_admin_username }}
-      container_registry_admin_password:
-        value: ${{ jobs.deploy_terraform.outputs.container_registry_admin_password }}
     
 permissions:
   # Only allow to read repo content
@@ -81,9 +76,6 @@ jobs:
     needs: [deploy_prerrequisites]
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    outputs:
-      container_registry_admin_username: ${{ steps.terraform_output.outputs.container_registry_admin_username }}
-      container_registry_admin_password: ${{ steps.terraform_output.outputs.container_registry_admin_password }}
 
     env:
         TF_VAR_azurerm_subscription_id: ${{ vars.AZ_SUBSCRIPTION_ID }}
@@ -115,7 +107,6 @@ jobs:
       uses: hashicorp/setup-terraform@v2.0.3
       with:
         terraform_version: ~>1.7.5
-        terraform_wrapper: false
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -151,11 +142,3 @@ jobs:
     - name: Terraform Apply
       working-directory: ./terraform
       run: terraform apply -auto-approve -input=false
-
-    # Write output variables
-    - name: Terraform Output
-      id: terraform_output
-      working-directory: ./terraform
-      run: | 
-        container_registry_admin_username=$(terraform output container_registry_admin_username) >> "$GITHUB_OUTPUT"
-        container_registry_admin_password=$(terraform output container_registry_admin_password) >> "$GITHUB_OUTPUT"
