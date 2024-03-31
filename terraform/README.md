@@ -25,5 +25,7 @@ terraform {
 }
 ```
 
-
 In both files replace the `<HIGHLIGTED_VALUES>` with the corresponding configuration of the environment.
+
+Then use azure CLI to login by executing `az login`.
+After that, it should be possible to initialize the terraform working directory via `terraform init` and execute commands such as `terraform plan`.

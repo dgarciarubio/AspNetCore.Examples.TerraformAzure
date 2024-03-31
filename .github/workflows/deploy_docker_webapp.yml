@@ -25,7 +25,8 @@ jobs:
    
     steps:
 
-    # Azure Login using service principal
+    # Azure Login using service principal with OIDC
+    # https://github.com/marketplace/actions/azure-login#login-with-openid-connect-oidc-recommended
     - name: Azure login
       uses: azure/login@v2
       with:
