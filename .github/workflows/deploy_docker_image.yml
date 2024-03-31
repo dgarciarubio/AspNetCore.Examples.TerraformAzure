@@ -37,12 +37,24 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    # Docker ACR Login using admin user
-    - uses: azure/docker-login@v1
+    # Azure Login using service principal
+    - name: Azure login
+      uses: azure/login@v2
       with:
-        login-server: ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io
-        username: ${{ inputs.container_registry_admin_username }}
-        password: ${{ inputs.container_registry_admin_password }}
+        subscription-id: ${{ vars.AZ_SUBSCRIPTION_ID }}
+        tenant-id: ${{ vars.AZ_TENANT_ID }}
+        client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
+
+    # Docker ACR Login
+    - name: Login to ACR via OIDC
+      run: az acr login --name ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}
+
+    # Docker ACR Login using admin user
+    # - uses: azure/docker-login@v1
+    #   with:
+    #     login-server: ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io
+    #     username: ${{ inputs.container_registry_admin_username }}
+    #     password: ${{ inputs.container_registry_admin_password }}
     
     # Build and push docker image to ACR
     - run: |
