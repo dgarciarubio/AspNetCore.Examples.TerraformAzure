@@ -5,6 +5,7 @@ This project serves as an example of how to deploy an ASP.Net Core application t
 The following deployment configurations are used:
   - Deploy an ASP.Net Core app to an Azure Web App running linux.
   - Deploy a contianerized ASP.Net Core app to an Azure Web App for Containers.
+  - Deploy a containerized ASP.Net Core app to an Azure Container Apps environment.
 
 It makes use of the following technologies and projects:
 
@@ -13,8 +14,9 @@ It makes use of the following technologies and projects:
 - [Docker](https://www.docker.com/)
 - [GitHub Actions](https://docs.github.com/en/actions)
 - [Terraform 1.7.5](https://www.terraform.io/)
-- [Azure Terraform Provider 3.83.0](https://registry.terraform.io/providers/hashicorp/azurerm/3.83.0/docs)
+- [Azure Terraform Provider 3.97.1](https://registry.terraform.io/providers/hashicorp/azurerm/3.97.1/docs)
 - [Azure Terraform Backend](https://developer.hashicorp.com/terraform/language/v1.7.x/settings/backends/azurerm)
 - [Azure Blob Storage](https://learn.microsoft.com/azure/storage/blobs/)
 - [Azure Container Registry](https://learn.microsoft.com/azure/container-registry/)
-- [Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/)
+- [Azure App Service](https://learn.microsoft.com/azure/app-service/)
+- [Azure Container Apps](https://learn.microsoft.com/azure/container-apps/)

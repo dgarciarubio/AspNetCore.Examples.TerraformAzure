@@ -120,3 +120,37 @@ variable "docker_web_app_name" {
   type    = string
   default = "aspnetcore-examples-terraformazure-dockerwebapp"
 }
+
+resource "azurerm_container_app_environment" "aca_env" {
+  name                       = var.container_app_env_name
+  resource_group_name        = azurerm_resource_group.rg.name
+  location                   = azurerm_resource_group.rg.location
+}
+variable "container_app_env_name" {
+  type    = string
+  default = "aspnetcore-examples-terraformazure-acaenv"
+}
+
+resource "azurerm_container_app" "aca_app" {
+  name                         = var.container_app_name
+  resource_group_name          = azurerm_resource_group.rg.name
+  container_app_environment_id = azurerm_container_app_environment.aca_env.id
+  revision_mode                = "Single"
+
+  template {
+    container {
+      name   = var.container_app_name
+      image  = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+      cpu    = 0.25
+      memory = "0.5Gi"
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [ template[0].container ]
+  }
+}
+variable "container_app_name" {
+  type    = string
+  default = "aspnetcore-ex-terraz-acawebapp"
+}

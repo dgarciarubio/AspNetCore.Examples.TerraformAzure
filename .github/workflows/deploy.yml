@@ -60,3 +60,12 @@ jobs:
       environment: ${{ inputs.environment }}
       image_name: ${{ inputs.artifact_name }}
     secrets: inherit
+
+  deploy_aca_web_app:
+    name: Deploy ACA Web App
+    needs: [deploy_docker_image]
+    uses: ./.github/workflows/deploy_aca_webapp.yml
+    with:
+      environment: ${{ inputs.environment }}
+      image_name: ${{ inputs.artifact_name }}
+    secrets: inherit

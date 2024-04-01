@@ -1,0 +1,53 @@
+name: Deploy ACA Web App
+
+on:
+  # Call from other workflows
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+
+permissions:
+  # Only allow to read repo content
+  contents: read
+  # Allow to write tokens for Azure Login OIDC
+  id-token: write
+
+jobs:
+  deploy:
+    name: Deploy ACA Web App
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+   
+    steps:
+
+    # Azure Login using service principal with OIDC
+    # https://github.com/marketplace/actions/azure-login#login-with-openid-connect-oidc-recommended
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        subscription-id: ${{ vars.AZ_SUBSCRIPTION_ID }}
+        tenant-id: ${{ vars.AZ_TENANT_ID }}
+        client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
+    
+    - name: 'Deploy to Azure'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: ${{ vars.AZ_DOCKER_WEB_APP_NAME }}
+        images: '${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }}'
+
+
+    - name: 'Deploy to Azure'
+      uses: azure/container-apps-deploy-action@v1
+      with:
+        resourceGroup: ${{ vars.AZ_RESOURCE_GROUP_NAME }}
+        containerAppEnvironment: ${{ vars.AZ_CONTAINER_APP_ENV_NAME }}
+        containerAppName: ${{ vars.AZ_CONTAINER_APP_NAME }}
+        acrName: ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}
+        imageToDeploy: '${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }}'
+        ingress: external
+        targetPort: 8080
