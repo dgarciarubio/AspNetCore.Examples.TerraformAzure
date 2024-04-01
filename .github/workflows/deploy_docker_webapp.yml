@@ -42,12 +42,12 @@ jobs:
 
     - name: Smoke Test
       run: |
-        state=`curl --silent --head -X GET --max-time 300 https://${{ vars.AZ_DOCKER_WEB_APP_NAME }}.azurewebsites.net | head --lines 1 | cut --fields 2 --delimiter ' '`
-        if [[ $state -ne 200 ]]
+        status=`curl --silent --head -X GET --max-time 300 https://${{ vars.AZ_DOCKER_WEB_APP_NAME }}.azurewebsites.net | head --lines 1 | cut --fields 2 --delimiter ' '`
+        if [[ $status -ne 200 ]]
         then
-            echo 'Smoke test unsuccessful.'
+            echo Smoke test failed with status code $status.
             exit -1
         else
-            echo 'Smoke test successful.'
+            echo Smoke test successful with status code $status.
             exit 0
         fi
