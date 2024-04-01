@@ -147,7 +147,13 @@ resource "azurerm_container_app" "aca_app" {
   }
 
   lifecycle {
-    ignore_changes = [template[0].container]
+    # These will be taken care of by the web app deployment action
+    ignore_changes = [
+      secret,
+      ingress,
+      registry,
+      template[0].container,
+    ]
   }
 }
 variable "container_app_name" {
