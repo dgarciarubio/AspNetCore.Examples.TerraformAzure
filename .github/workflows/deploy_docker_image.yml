@@ -47,5 +47,5 @@ jobs:
     # Build and push docker image to ACR
     - name: Push image to ACR
       run: |
-        docker build -f ${{ inputs.project_path }}/Dockerfile -t  ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} .
-        docker push ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} 
+        docker build -f ${{ inputs.project_path }}/Dockerfile -t ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} -t ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:latest .
+        docker push ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }} --all-tags
