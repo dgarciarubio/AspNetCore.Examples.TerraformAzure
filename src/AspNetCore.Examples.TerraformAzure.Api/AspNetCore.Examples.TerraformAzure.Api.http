@@ -1,6 +1,0 @@
-@AspNetCore.Examples.TerraformAzure.Api_HostAddress = http://localhost:5118
-
-GET {{AspNetCore.Examples.TerraformAzure.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
