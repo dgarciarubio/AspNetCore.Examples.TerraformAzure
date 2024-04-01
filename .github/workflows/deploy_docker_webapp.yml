@@ -34,9 +34,20 @@ jobs:
         tenant-id: ${{ vars.AZ_TENANT_ID }}
         client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
     
-    # Deploy to Azure Web App
     - name: 'Deploy to Azure'
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ vars.AZ_DOCKER_WEB_APP_NAME }}
         images: '${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} '
+
+    - name: Smoke Test
+      run: |
+        state=`curl --silent --head -X GET --max-time 300 https://${{ vars.AZ_DOCKER_WEB_APP_NAME }}.azurewebsites.net | head --lines 1 | cut --fields 2 --delimiter ' '`
+        if [[ $state -ne 200 ]]
+        then
+            echo 'Smoke test unsuccessful.'
+            exit -1
+        else
+            echo 'Smoke test successful.'
+            exit 0
+        fi

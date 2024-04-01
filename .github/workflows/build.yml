@@ -11,8 +11,8 @@ on:
         required: true
         type: string
 
-# Only allow to read repo content
 permissions:
+  # Only allow to read repo content
   contents: read
 
 jobs:

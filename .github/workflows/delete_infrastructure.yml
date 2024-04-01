@@ -35,7 +35,6 @@ jobs:
         tenant-id: ${{ vars.AZ_TENANT_ID }}
         client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
 
-    # Delete resource group if exists
     - name: Delete Resource Group
       uses: azure/CLI@v1
       with:
