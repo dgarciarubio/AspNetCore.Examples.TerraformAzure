@@ -122,9 +122,9 @@ variable "docker_web_app_name" {
 }
 
 resource "azurerm_container_app_environment" "aca_env" {
-  name                       = var.container_app_env_name
-  resource_group_name        = azurerm_resource_group.rg.name
-  location                   = azurerm_resource_group.rg.location
+  name                = var.container_app_env_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
 }
 variable "container_app_env_name" {
   type    = string
@@ -147,7 +147,7 @@ resource "azurerm_container_app" "aca_app" {
   }
 
   lifecycle {
-    ignore_changes = [ template[0].container ]
+    ignore_changes = [template[0].container]
   }
 }
 variable "container_app_name" {
