@@ -43,7 +43,7 @@ jobs:
         inlineScript: |
             if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) = false ]; then
                 az group create --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
-                echo "created=true" >> "$GITHUB_OUTPUT"
+                echo "created=true" >> $GITHUB_OUTPUT
             fi
 
     - name: Create Storage Account
@@ -54,7 +54,7 @@ jobs:
         inlineScript: |
             if [ $(az storage account list --query "[?name == '${{ vars.AZ_STORAGE_ACCOUNT_NAME }}'] | length(@)") = 0 ]; then
                 az storage account create --name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --resource-group ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
-                echo "created=true" >> "$GITHUB_OUTPUT"
+                echo "created=true" >> $GITHUB_OUTPUT
             fi
 
     - name: Create Storage Container
@@ -65,7 +65,7 @@ jobs:
         inlineScript: |
             if [ $(az storage container exists --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors --query "exists") = false ]; then
                 az storage container create --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors
-                echo "created=true" >> "$GITHUB_OUTPUT"
+                echo "created=true" >> $GITHUB_OUTPUT
             fi
 
   deploy_terraform:

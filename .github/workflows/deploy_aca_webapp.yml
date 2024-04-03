@@ -52,7 +52,7 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
           url=`az containerapp show --resource-group ${{ vars.AZ_RESOURCE_GROUP_NAME }} --name ${{ vars.AZ_CONTAINER_APP_NAME }} --query properties.configuration.ingress.fqdn`
-          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "url=$url" >> $GITHUB_OUTPUT
 
     - name: Smoke Test
       run: |
