@@ -56,8 +56,21 @@ jobs:
 
     - name: Smoke Test
       run: |
-        status=`curl --silent --head -X GET --max-time 300 https://${{ steps.get_aca_url.outputs.url }} | head --lines 1 | cut --fields 2 --delimiter ' '`
-        if [[ $status -ne 200 ]]
+        accepted_status=200
+        max_attempts=3
+        
+        status=0
+        attempts=0
+        while true; do
+            status=`curl --silent --head -X GET --max-time 300 https://${{ steps.get_aca_url.outputs.url }} | head --lines 1 | cut --fields 2 --delimiter ' '`
+            attempts=$((attempts + 1))
+            echo Completed attempt $attempts with status $status
+            if [[( $status -eq $accepted_status) || ($attempts -eq $max_attempts)]]
+            then break
+            fi
+        done
+
+        if [[ $status -ne $accepted_status ]]
         then
             echo Smoke test failed with status code $status.
             exit -1
