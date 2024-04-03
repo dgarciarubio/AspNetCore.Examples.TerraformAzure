@@ -61,7 +61,7 @@ jobs:
     uses: ./.github/workflows/deploy_docker_webapp.yml
     with:
       environment: ${{ inputs.environment }}
-      image_name: ${{ inputs.artifact_name }}
+      image_name: ${{ inputs.image_name }}
     secrets: inherit
 
   deploy_aca_web_app:
@@ -70,5 +70,5 @@ jobs:
     uses: ./.github/workflows/deploy_aca_webapp.yml
     with:
       environment: ${{ inputs.environment }}
-      image_name: ${{ inputs.artifact_name }}
+      image_name: ${{ inputs.image_name }}
     secrets: inherit
