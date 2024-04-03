@@ -44,3 +44,24 @@ jobs:
         imageToDeploy: '${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }}'
         ingress: external
         targetPort: 8080
+
+    - name: Get container app URL
+      id: get_aca_url
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          url=`az containerapp show --resource-group ${{ vars.AZ_RESOURCE_GROUP_NAME }} --name ${{ vars.AZ_CONTAINER_APP_NAME }} --query properties.configuration.ingress.fqdn`
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+    - name: Smoke Test
+      run: |
+        status=`curl --silent --head -X GET --max-time 300 https://${{ steps.get_aca_url.outputs.url }} | head --lines 1 | cut --fields 2 --delimiter ' '`
+        if [[ $status -ne 200 ]]
+        then
+            echo Smoke test failed with status code $status.
+            exit -1
+        else
+            echo Smoke test successful with status code $status.
+            exit 0
+        fi
