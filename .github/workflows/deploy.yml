@@ -36,39 +36,39 @@ jobs:
       environment: ${{ inputs.environment }}
     secrets: inherit
 
-  deploy_web_app:
-    name: Deploy Web App
-    needs: [deploy_infrastructure]
-    uses: ./.github/workflows/deploy_webapp.yml
-    with:
-      environment: ${{ inputs.environment }}
-      artifact_name: ${{ inputs.artifact_name }}
-    secrets: inherit
+  # deploy_web_app:
+  #   name: Deploy Web App
+  #   needs: [deploy_infrastructure]
+  #   uses: ./.github/workflows/deploy_webapp.yml
+  #   with:
+  #     environment: ${{ inputs.environment }}
+  #     artifact_name: ${{ inputs.artifact_name }}
+  #   secrets: inherit
 
-  deploy_docker_image:
-    name: Deploy Docker Image
-    needs: [deploy_infrastructure]
-    uses: ./.github/workflows/deploy_docker_image.yml
-    with:
-      environment: ${{ inputs.environment }}
-      artifact_name: docker-${{ inputs.artifact_name }}
-      image_name: ${{ inputs.image_name }}
-    secrets: inherit
+  # deploy_docker_image:
+  #   name: Deploy Docker Image
+  #   needs: [deploy_infrastructure]
+  #   uses: ./.github/workflows/deploy_docker_image.yml
+  #   with:
+  #     environment: ${{ inputs.environment }}
+  #     artifact_name: docker-${{ inputs.artifact_name }}
+  #     image_name: ${{ inputs.image_name }}
+  #   secrets: inherit
 
-  deploy_docker_web_app:
-    name: Deploy Docker Web App
-    needs: [deploy_docker_image]
-    uses: ./.github/workflows/deploy_docker_webapp.yml
-    with:
-      environment: ${{ inputs.environment }}
-      image_name: ${{ inputs.image_name }}
-    secrets: inherit
+  # deploy_docker_web_app:
+  #   name: Deploy Docker Web App
+  #   needs: [deploy_docker_image]
+  #   uses: ./.github/workflows/deploy_docker_webapp.yml
+  #   with:
+  #     environment: ${{ inputs.environment }}
+  #     image_name: ${{ inputs.image_name }}
+  #   secrets: inherit
 
-  deploy_aca_web_app:
-    name: Deploy ACA Web App
-    needs: [deploy_docker_image]
-    uses: ./.github/workflows/deploy_aca_webapp.yml
-    with:
-      environment: ${{ inputs.environment }}
-      image_name: ${{ inputs.image_name }}
-    secrets: inherit
+  # deploy_aca_web_app:
+  #   name: Deploy ACA Web App
+  #   needs: [deploy_docker_image]
+  #   uses: ./.github/workflows/deploy_aca_webapp.yml
+  #   with:
+  #     environment: ${{ inputs.environment }}
+  #     image_name: ${{ inputs.image_name }}
+  #   secrets: inherit
