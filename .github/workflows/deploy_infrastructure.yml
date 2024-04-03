@@ -19,10 +19,6 @@ jobs:
     name: Deploy prerrequisites for Terraform
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    outputs:
-        resource_group_created: ${{ steps.create_resource_group.outputs.created }}
-        storage_account_created: ${{ steps.create_storage_account.outputs.created }}
-        storage_container_created: ${{ steps.create_storage_container.outputs.created }}
 
     steps:
 
@@ -36,36 +32,42 @@ jobs:
         client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
 
     - name: Create Resource Group
-      id: create_resource_group
       uses: azure/CLI@v1
       with:
         azcliversion: 2.30.0
         inlineScript: |
             if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) = false ]; then
+                echo Creating resource group...
                 az group create --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
-                echo "created=true" >> $GITHUB_OUTPUT
+                echo Resource group created.
+            else
+                echo Resource group already exists.
             fi
 
     - name: Create Storage Account
-      id: create_storage_account
       uses: azure/CLI@v1
       with:
         azcliversion: 2.30.0
         inlineScript: |
             if [ $(az storage account list --query "[?name == '${{ vars.AZ_STORAGE_ACCOUNT_NAME }}'] | length(@)") = 0 ]; then
+                echo Creating storage account...
                 az storage account create --name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --resource-group ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
-                echo "created=true" >> $GITHUB_OUTPUT
+                echo Storage account created.
+            else
+                echo Storage account already exists.
             fi
 
     - name: Create Storage Container
-      id: create_storage_container
       uses: azure/CLI@v1
       with:
         azcliversion: 2.30.0
         inlineScript: |
             if [ $(az storage container exists --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors --query "exists") = false ]; then
+                echo Creating storage container...
                 az storage container create --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors
-                echo "created=true" >> $GITHUB_OUTPUT
+                echo Storage container created.
+            else
+                echo Storage container already exists.
             fi
 
   deploy_terraform:
@@ -121,17 +123,28 @@ jobs:
       working-directory: ./terraform
       run: terraform fmt -check
 
+    - name: Check if prerrequisites are in state
+      id: check_prerrequisites
+      working-directory: ./terraform
+      run: |
+        rg_imported=`terraform state list | grep azurerm_resource_group.rg`
+        echo "rg_imported=$rg_imported" >> $GITHUB_OUTPUT
+        sa_imported=`terraform state list | grep azurerm_storage_account.st`
+        echo "sa_imported=$sa_imported" >> $GITHUB_OUTPUT
+        sc_imported=`terraform state list | grep azurerm_storage_container.tfstate`
+        echo "sc_imported=$sc_imported" >> $GITHUB_OUTPUT
+
     # Import newly created prerrequisite resources
     - name: Terraform Import Resource Group
-      if: ${{needs.deploy_prerrequisites.outputs.resource_group_created}}
+      if: ${{ steps.check_prerrequisites.outputs.rg_imported == '' }}
       working-directory: ./terraform
       run: terraform import azurerm_resource_group.rg /subscriptions/${{ vars.AZ_SUBSCRIPTION_ID }}/resourceGroups/${{ vars.AZ_RESOURCE_GROUP_NAME }}
     - name: Terraform Import Storage Account
-      if: ${{needs.deploy_prerrequisites.outputs.storage_account_created}}
+      if: ${{ steps.check_prerrequisites.outputs.sa_imported == '' }}
       working-directory: ./terraform
       run: terraform import azurerm_storage_account.st /subscriptions/${{ vars.AZ_SUBSCRIPTION_ID }}/resourceGroups/${{ vars.AZ_RESOURCE_GROUP_NAME }}/providers/Microsoft.Storage/storageAccounts/${{ vars.AZ_STORAGE_ACCOUNT_NAME }}
     - name: Terraform Import Storage Container
-      if: ${{needs.deploy_prerrequisites.outputs.storage_container_created}}
+      if: ${{ steps.check_prerrequisites.outputs.sc_imported == '' }}
       working-directory: ./terraform
       run: terraform import azurerm_storage_container.tfstate https://${{ vars.AZ_STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/tfstate
 
