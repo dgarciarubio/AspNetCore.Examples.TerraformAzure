@@ -7,7 +7,7 @@ on:
       environment:
         required: true
         type: string
-      project_path:
+      artifact_name:
         required: true
         type: string
       image_name:
@@ -28,8 +28,18 @@ jobs:
    
     steps:
 
-    - name: Checkout
-      uses: actions/checkout@v3
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v1
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ./${{ inputs.artifact_name }}
+
+    - name: Extract and re-tag Docker image
+      run: |
+        docker load -i ./${{ inputs.artifact_name }}/${{ inputs.image_name }}.tar
+        docker image tag ${{ inputs.image_name }} ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }}
+        docker image tag ${{ inputs.image_name }} ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:latest
+        docker rmi ${{ inputs.image_name }}
 
     # Azure Login using service principal with OIDC
     # https://github.com/marketplace/actions/azure-login#login-with-openid-connect-oidc-recommended
@@ -40,12 +50,9 @@ jobs:
         tenant-id: ${{ vars.AZ_TENANT_ID }}
         client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
 
-    # Docker ACR Login
     - name: Login to ACR
       run: az acr login --name ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}
-    
-    # Build and push docker image to ACR
+
     - name: Push image to ACR
       run: |
-        docker build -f ${{ inputs.project_path }}/Dockerfile -t ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:${{ github.sha }} -t ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }}:latest .
         docker push ${{ vars.AZ_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ inputs.image_name }} --all-tags

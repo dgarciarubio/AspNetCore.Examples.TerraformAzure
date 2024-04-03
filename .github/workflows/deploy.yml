@@ -13,6 +13,9 @@ on:
       artifact_name:
         required: true
         type: string
+      image_name:
+        required: true
+        type: string
 
 permissions:
   # Only allow to read repo content
@@ -48,8 +51,8 @@ jobs:
     uses: ./.github/workflows/deploy_docker_image.yml
     with:
       environment: ${{ inputs.environment }}
-      project_path: ${{ inputs.project_path }}
-      image_name: ${{ inputs.artifact_name }}
+      artifact_name: docker-${{ inputs.artifact_name }}
+      image_name: ${{ inputs.image_name }}
     secrets: inherit
 
   deploy_docker_web_app:

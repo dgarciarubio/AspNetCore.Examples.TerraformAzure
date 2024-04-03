@@ -30,4 +30,5 @@ jobs:
       environment: default
       project_path: './src/AspNetCore.Examples.TerraformAzure.Api'
       artifact_name: 'web-app'
+      image_name: 'web-app'
     secrets: inherit
