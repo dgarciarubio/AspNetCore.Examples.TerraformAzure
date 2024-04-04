@@ -127,11 +127,11 @@ jobs:
       id: check_prerrequisites
       working-directory: ./terraform
       run: |
-        rg_imported=`terraform state list | grep azurerm_resource_group.rg`
+        rg_imported=$(terraform state list | grep azurerm_resource_group.rg)
         echo "rg_imported=$rg_imported" >> $GITHUB_OUTPUT
-        sa_imported=`terraform state list | grep azurerm_storage_account.st`
+        sa_imported=$(terraform state list | grep azurerm_storage_account.st)
         echo "sa_imported=$sa_imported" >> $GITHUB_OUTPUT
-        sc_imported=`terraform state list | grep azurerm_storage_container.tfstate`
+        sc_imported=$(terraform state list | grep azurerm_storage_container.tfstate)
         echo "sc_imported=$sc_imported" >> $GITHUB_OUTPUT
 
     # Import newly created prerrequisite resources
