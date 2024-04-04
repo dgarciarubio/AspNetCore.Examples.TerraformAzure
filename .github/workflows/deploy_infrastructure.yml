@@ -129,7 +129,7 @@ jobs:
       run: |
         rg_imported=$(terraform state list | grep azurerm_resource_group.rg)
         echo rg_imported: $rg_imported
-        echo "rg_imported=$rg_imported" >> $GITHUB_OUTPUT
+        echo "rg_imported=patata" >> $GITHUB_OUTPUT
         sa_imported=$(terraform state list | grep azurerm_storage_account.st)
         echo sa_imported: $sa_imported
         echo "sa_imported=$sa_imported" >> $GITHUB_OUTPUT
