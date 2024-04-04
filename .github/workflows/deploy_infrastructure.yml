@@ -127,13 +127,13 @@ jobs:
       id: check_prerrequisites
       working-directory: ./terraform
       run: |
-        rg_imported=$(terraform state list | grep azurerm_resource_group.rg)
+        rg_imported=$(terraform state list | { grep azurerm_resource_group.rg || true; })
         echo rg_imported: $rg_imported
-        echo "rg_imported=hello" >> "$GITHUB_OUTPUT"
-        sa_imported=$(terraform state list | grep azurerm_storage_account.st)
+        echo "rg_imported=rg_imported" >> "$GITHUB_OUTPUT"
+        sa_imported=$(terraform state list | { grep azurerm_storage_account.st || true; })
         echo sa_imported: $sa_imported
         echo "sa_imported=$sa_imported" >> $GITHUB_OUTPUT
-        sc_imported=$(terraform state list | grep azurerm_storage_container.tfstate)
+        sc_imported=$(terraform state list | { grep azurerm_storage_container.tfstate || true; })
         echo sc_imported: $sc_imported
         echo "sc_imported=$sc_imported" >> $GITHUB_OUTPUT
 
