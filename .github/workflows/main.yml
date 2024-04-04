@@ -14,17 +14,17 @@ permissions:
   id-token: write
 
 jobs:
-  # build:
-  #   name: Build
-  #   uses: ./.github/workflows/build.yml
-  #   with:
-  #     project_path: './src/AspNetCore.Examples.TerraformAzure.Api'
-  #     artifact_name: 'web-app'
-  #     image_name: 'web-app'
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yml
+    with:
+      project_path: './src/AspNetCore.Examples.TerraformAzure.Api'
+      artifact_name: 'web-app'
+      image_name: 'web-app'
 
   deploy_default:
     name: Deploy on Default Environment
-    # needs: [build]
+    needs: [build]
     uses: ./.github/workflows/deploy.yml
     with:
       environment: default

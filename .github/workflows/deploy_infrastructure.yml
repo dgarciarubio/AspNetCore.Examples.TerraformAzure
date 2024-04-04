@@ -15,64 +15,64 @@ permissions:
   id-token: write
 
 jobs:
-  # deploy_prerrequisites:
-  #   name: Deploy prerrequisites for Terraform
-  #   runs-on: ubuntu-latest
-  #   environment: ${{ inputs.environment }}
+  deploy_prerrequisites:
+    name: Deploy prerrequisites for Terraform
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
 
-  #   steps:
+    steps:
 
-  #   # Azure Login using service principal with OIDC
-  #   # https://github.com/marketplace/actions/azure-login#login-with-openid-connect-oidc-recommended
-  #   - name: Azure login
-  #     uses: azure/login@v2
-  #     with:
-  #       subscription-id: ${{ vars.AZ_SUBSCRIPTION_ID }}
-  #       tenant-id: ${{ vars.AZ_TENANT_ID }}
-  #       client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
+    # Azure Login using service principal with OIDC
+    # https://github.com/marketplace/actions/azure-login#login-with-openid-connect-oidc-recommended
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        subscription-id: ${{ vars.AZ_SUBSCRIPTION_ID }}
+        tenant-id: ${{ vars.AZ_TENANT_ID }}
+        client-id: ${{ vars.AZ_SERVICE_PRINCIPAL_APP_ID }}
 
-  #   - name: Create Resource Group
-  #     uses: azure/CLI@v1
-  #     with:
-  #       azcliversion: 2.30.0
-  #       inlineScript: |
-  #           if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) = false ]; then
-  #               echo Creating resource group...
-  #               az group create --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
-  #               echo Resource group created.
-  #           else
-  #               echo Resource group already exists.
-  #           fi
+    - name: Create Resource Group
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+            if [ $(az group exists --name ${{ vars.AZ_RESOURCE_GROUP_NAME }}) = false ]; then
+                echo Creating resource group...
+                az group create --name ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
+                echo Resource group created.
+            else
+                echo Resource group already exists.
+            fi
 
-  #   - name: Create Storage Account
-  #     uses: azure/CLI@v1
-  #     with:
-  #       azcliversion: 2.30.0
-  #       inlineScript: |
-  #           if [ $(az storage account list --query "[?name == '${{ vars.AZ_STORAGE_ACCOUNT_NAME }}'] | length(@)") = 0 ]; then
-  #               echo Creating storage account...
-  #               az storage account create --name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --resource-group ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
-  #               echo Storage account created.
-  #           else
-  #               echo Storage account already exists.
-  #           fi
+    - name: Create Storage Account
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+            if [ $(az storage account list --query "[?name == '${{ vars.AZ_STORAGE_ACCOUNT_NAME }}'] | length(@)") = 0 ]; then
+                echo Creating storage account...
+                az storage account create --name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --resource-group ${{ vars.AZ_RESOURCE_GROUP_NAME }} --location ${{ vars.AZ_RESOURCE_GROUP_LOCATION }}
+                echo Storage account created.
+            else
+                echo Storage account already exists.
+            fi
 
-  #   - name: Create Storage Container
-  #     uses: azure/CLI@v1
-  #     with:
-  #       azcliversion: 2.30.0
-  #       inlineScript: |
-  #           if [ $(az storage container exists --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors --query "exists") = false ]; then
-  #               echo Creating storage container...
-  #               az storage container create --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors
-  #               echo Storage container created.
-  #           else
-  #               echo Storage container already exists.
-  #           fi
+    - name: Create Storage Container
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+            if [ $(az storage container exists --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors --query "exists") = false ]; then
+                echo Creating storage container...
+                az storage container create --account-name ${{ vars.AZ_STORAGE_ACCOUNT_NAME }} --name tfstate --only-show-errors
+                echo Storage container created.
+            else
+                echo Storage container already exists.
+            fi
 
   deploy_terraform:
     name: Deploy infrastructure with Terraform
-    # needs: [deploy_prerrequisites]
+    needs: [deploy_prerrequisites]
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
 
